@@ -12,40 +12,53 @@ library(shiny)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
-   
-   # Application title
-   titlePanel("US Oil & Gas Trade"),
-   
-   # Sidebar with a slider input for number of bins 
-   sidebarLayout(
-      sidebarPanel(
-        selectizeInput(inputId = 'Category', 
-                       label = 'Natural Gas',
-                       choices = unique(colnames(ngexports)))
-        ),
-      
-      # Show a plot of the generated distribution
-      mainPanel(
-         plotOutput("distPlot")
-      )
-   )
+  
+  # Application title
+  titlePanel("US Oil & Gas Trade"),
+  
+  # Sidebar with a slider input for number of bins 
+  sidebarLayout(
+    sidebarPanel(
+      selectizeInput(inputId = 'Category', 
+                     label = 'U.S. Trade',
+                     choices = unique(df_all$type)),
+      selectizeInput(inputId = 'prod', 
+                     label = 'Production',
+                     choices = unique(ng_prod$variable))
+    ),
+    
+    # Show a plot of the generated distribution
+    mainPanel(
+      plotOutput("distPlot"), 
+      plotOutput('production')
+    )
+  )
 )
 
 #Server.R
 server <- function(input, output) {
-   
-   output$distPlot <- renderPlot({
-     
-     ggplot(data=df, aes(x=Date, y=df$value, colour=variable)) + 
-       geom_line() + 
-       labs(title='U.S. Natural Gas Exports') + 
-       xlab(label='Billion Cubic Feet') + 
-       ylab(label = 'Date')
-   })
-   
-     
+
+  output$distPlot <- renderPlot({
+    
+   df_all %>%
+      filter(type == input$Category) %>% 
+      ggplot(aes(x=Date, y=value, colour=variable)) + 
+      geom_line() + 
+      labs(title='Imports') + 
+      xlab(label = 'Date') +
+      ylab(label='Billion Cubic Feet')
+  })
+
+output$production <- renderPlot({
+  ng_prod %>% filter(variable == input$prod) %>%
+  ggplot(aes(x=Date, y=value)) + 
+    geom_line() +  
+    xlab(label='Date') + 
+    ylab(label='Billion Cubic Feet') + 
+    labs(title='U.S. Natural Gas Production') 
+  
+})
 }
 
 # Run the application 
 shinyApp(ui = ui, server = server)
-
