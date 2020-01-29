@@ -1,14 +1,7 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
 
 
 library(shiny)
+library(shinydashboard)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -19,45 +12,63 @@ ui <- fluidPage(
   # Sidebar with a slider input for number of bins 
   sidebarLayout(
     sidebarPanel(
-      selectizeInput(inputId = 'Category', 
+      selectizeInput(inputId = 'trade', 
                      label = 'U.S. Trade',
                      choices = unique(df_all$type)),
       selectizeInput(inputId = 'prod', 
                      label = 'Production',
-                     choices = unique(ng_prod$variable))
-    ),
+                     choices = unique(ng_prod$variable)),
+      selectizeInput(inputId = 'supply', 
+                     label = 'Supply_tcf',
+                     choices = "Reserves (Trillion Cubic Ft.)")),
     
     # Show a plot of the generated distribution
     mainPanel(
-      plotOutput("distPlot"), 
-      plotOutput('production')
+      plotOutput("trade"), 
+      plotOutput('prod'),
+      plotOutput('supply')
     )
   )
 )
 
 #Server.R
 server <- function(input, output) {
-
-  output$distPlot <- renderPlot({
+  
+  output$trade <- renderPlot({
     
-   df_all %>%
-      filter(type == input$Category) %>% 
+    df_all %>%
+      filter(type == input$trade) %>% 
       ggplot(aes(x=Date, y=value, colour=variable)) + 
       geom_line() + 
       labs(title='Imports') + 
       xlab(label = 'Date') +
       ylab(label='Billion Cubic Feet')
   })
-
-output$production <- renderPlot({
-  ng_prod %>% filter(variable == input$prod) %>%
-  ggplot(aes(x=Date, y=value)) + 
-    geom_line() +  
-    xlab(label='Date') + 
-    ylab(label='Billion Cubic Feet') + 
-    labs(title='U.S. Natural Gas Production') 
   
-})
+  output$prod <- renderPlot({
+    
+    ng_prod %>% filter(variable == input$prod) %>%
+      ggplot(aes(x=Date, y=value)) + 
+      geom_line() +  
+      xlab(label='Date') + 
+      ylab(label='Billion Cubic Feet') + 
+      labs(title='U.S. Natural Gas Production') 
+    
+  })
+  
+  output$supply <- renderPlot({
+    
+    plot(x=ngsupply$Date, 
+         y=ngsupply$Proved_Reserves, 
+         type='line', 
+         col='blue', 
+         main='U.S. Natural Gas Proven Reserves', 
+         xlab = 'Date', 
+         ylab = 'Trillion Cubic Feet', 
+         frame.plot = T, 
+         tck = 1)
+    
+  })
 }
 
 # Run the application 

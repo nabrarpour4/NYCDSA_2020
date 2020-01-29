@@ -108,8 +108,8 @@ ng_prod
 
 ngsupply = Quandl('EIA/INTL_3_6_USA_TCF_A', 
                   start_date='01-01-1980', 
-                  end_date = '01-01-2018')
-
+                  end_date = '01-01-2020')
+head(ngsupply)
 colnames(ngsupply) = c('Date', 'Proved_Reserves')
 
 plot(x=ngsupply$Date, 
