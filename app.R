@@ -6,29 +6,33 @@ library(shinydashboard)
 # Define UI for application that draws a histogram
 ui <- fluidPage(
   
+  
+
+  
   # Application title
   titlePanel("US Oil & Gas Trade"),
   
   # Sidebar with a slider input for number of bins 
-  sidebarLayout(
-    sidebarPanel(
+
+  
+
+    # Show a plot of the generated distribution
+    mainPanel(
       selectizeInput(inputId = 'trade', 
                      label = 'U.S. Trade',
                      choices = unique(df_all$type)),
+      
       selectizeInput(inputId = 'prod', 
                      label = 'Production',
                      choices = unique(ng_prod$variable)),
-      selectizeInput(inputId = 'supply', 
-                     label = 'Supply_tcf',
-                     choices = "Reserves (Trillion Cubic Ft.)")),
-    
-    # Show a plot of the generated distribution
-    mainPanel(
-      plotOutput("trade"), 
-      plotOutput('prod'),
-      plotOutput('supply')
+      
+      tabsetPanel(
+        tabPanel("Trade", plotOutput("trade")),
+        tabPanel("Production", plotOutput('prod')),
+        tabPanel("Supply", plotOutput('supply')),
+        tabPanel("Reserves", plotOutput('reserves'))
+      )
     )
-  )
 )
 
 #Server.R
@@ -59,14 +63,28 @@ server <- function(input, output) {
   output$supply <- renderPlot({
     
     plot(x=ngsupply$Date, 
-         y=ngsupply$Proved_Reserves, 
-         type='line', 
+         y=ngsupply$Proven_Reserves, 
+         type='line',
          col='blue', 
          main='U.S. Natural Gas Proven Reserves', 
          xlab = 'Date', 
-         ylab = 'Trillion Cubic Feet', 
+         ylab = 'Trillion Cubic Feet',
+         lwd = 3,
          frame.plot = T, 
          tck = 1)
+    
+  })
+  
+  output$reserves <- renderPlot({
+    
+    a = sort(as.vector(intl_ng[nrow(intl_ng),-1]), decreasing = T)
+    barplot(as.numeric(a[,1:5]), 
+            names.arg = colnames(a[1:5]), 
+            main = 'International Natural Gas Reserves',
+            ylab = 'Trillion Cubic Feet',
+            ylim = c(0,2000), 
+            width = 1, 
+            col = c('green', 'blue', 'black', 'red', 'yellow'))
     
   })
 }

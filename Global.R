@@ -48,7 +48,7 @@ ggplot(data=imports, aes(x=Date)) +
 
 
 
-########### US Exports ##########
+########### U.S. Natural Gas Exports ##########
 
 
 
@@ -103,25 +103,27 @@ ng_prod = gather(ng_prod, "variable", "value",2:4)
 ng_prod
 
 
-####### U.S. Natural Gas Proved Reserves ###### 
-
+####### U.S. Natural Gas Supply Proven Reserves ###### 
 
 ngsupply = Quandl('EIA/INTL_3_6_USA_TCF_A', 
                   start_date='01-01-1980', 
                   end_date = '01-01-2020')
-head(ngsupply)
-colnames(ngsupply) = c('Date', 'Proved_Reserves')
 
+ngsupply = ngsupply %>% arrange(Date)
+ngsupply[nrow(ngsupply) + 1, ] = list(intl_ng$Date[40], 580) #Manually update 2019 annual reserve value for U.S.
+colnames(ngsupply) = c('Date', 'Proven_Reserves') #Rename columns
+
+#Time Series 
 plot(x=ngsupply$Date, 
-     y=ngsupply$Proved_Reserves, 
-     type='line', 
+     y=ngsupply$Proven_Reserves, 
+     type='line',
      col='blue', 
      main='U.S. Natural Gas Proven Reserves', 
      xlab = 'Date', 
-     ylab = 'Trillion Cubic Feet', 
+     ylab = 'Trillion Cubic Feet',
+     lwd = 3,
      frame.plot = T, 
      tck = 1)
-
 
 
 ######## International Natural Gas Reserves ######## 
@@ -140,13 +142,15 @@ intl_ng = Quandl(symbols_ng_reserves,
                  start_date='01-01-1980', 
                  end_date='01-01-2020',
                  collapse='annual')
+intl_ng
+intl_ng[40,4] = 580 #Updating 2019 annual reserve data for the U.S. 
 
 #Change columns names
 rownames(intl_ng) = intl_ng$Date
 colnames(intl_ng) = intl_ng_tickers
+intl_ng
 
 #Dataframe
-intl_ng
 
 a = sort(as.vector(intl_ng[nrow(intl_ng),-1]), decreasing = T)
 barplot(as.numeric(a[,1:5]), 
