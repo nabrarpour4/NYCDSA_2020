@@ -1,6 +1,6 @@
 ---
 title: "R Notebook"
-output: html_notebook
+output: html_document
 ---
 
 ######################## The U.S. Energy Renaissance  ##################
@@ -90,7 +90,7 @@ ng_prod = Quandl(symbols_ngprod,
 
 colnames(ng_prod) = titles_ngprod
 ng_prod[,-1] = round(ng_prod[,-1]/1000, digits=1)
-ng_prod
+
 
 melt_df = melt(data = ng_prod, id.vars = 'Date')
 ggplot(data=melt_df, aes(x=Date, y=value)) + 
@@ -109,11 +109,9 @@ ngsupply = Quandl('EIA/INTL_3_6_USA_TCF_A',
   start_date='01-01-1980', 
   end_date = '01-01-2020')
 
-
 ngsupply = ngsupply %>% arrange(Date)
 ngsupply[nrow(ngsupply) + 1, ] = list(intl_ng$Date[40], 580) #Manually update 2019 annual reserve value for U.S.
 colnames(ngsupply) = c('Date', 'Proven_Reserves') #Rename columns
-ngsupply
 
 #Time Series of U.S. Proven Reserves
 plot(x=ngsupply$Date, 
@@ -146,7 +144,6 @@ intl_ng = Quandl(symbols_ng_reserves,
 #Change dataframe columns names
 colnames(intl_ng) = intl_ng_tickers
 intl_ng[40,4] = 580 #Manually update 2019 annual reserve value for U.S.
-intl_ng
 
 #Bar Chart of Countries w/Highest Reserves
 a = sort(as.vector(intl_ng[nrow(intl_ng),-1]), decreasing = T)

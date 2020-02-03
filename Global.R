@@ -1,15 +1,17 @@
 
 ######################## NATURAL GAS ##############
 
+library('knitr')
 library(ggplot2)
 library(dplyr)
 library(shiny)
 library(leaflet)
 library(shinydashboard)
 library(Quandl)
-library(reshape2)
+library(reshape2)d
 library(tidyr)
 library(stringr)
+library(markdown)
 Quandl.api_key(api_key = "8u9meDr5sQxGim8ATVt6")
 
 #### US IMPORTS ####
