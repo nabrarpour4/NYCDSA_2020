@@ -1,6 +1,6 @@
 ---
 title: "R Notebook"
-output: html_document
+output: pdf_document
 ---
 
 ######################## The U.S. Energy Renaissance  ##################
@@ -66,7 +66,7 @@ colnames(exports) = symbols2_ng_titles
 exports[,-1] = round(exports[,-1]/1000, digits = 1)
 
 #Melt Dataframe by Variabe and Value
-df = melt(data=ngexports, id.vars = 'Date')
+df = melt(data=exports, id.vars = 'Date')
 
 #Time Series of exports by natural gas product
 ggplot(data=df, aes(x=Date, y=value, colour=variable)) + 
@@ -153,7 +153,8 @@ barplot(as.numeric(a[,1:5]),
   ylab = 'Trillion Cubic Feet',
   ylim = c(0,2000), 
   width = 1,
-  col = c('green', 'blue', 'black', 'red', 'yellow'))
+  col = c('green', 'blue', 'orange', 'black', 'brown'))
+a
 
 ```
 
