@@ -79,7 +79,7 @@ ggplot(data=df, aes(x=Date, y=value, colour=variable)) +
 
 ###### PRODUCTION ######
 
-```{r - PRODUCTION}
+```{r - PRODUCTION, echo=FALSE}
 symbols_ngprod = list('EIA/NG_N9070US2_A', 'EIA/NG_N9050US2_A', 'EIA/NG_N9060US2_A')
 titles_ngprod = list('Date', 'Dry_Natural_Gas', 'Marketed_Natural_Gas', 'Natural_Gas_Plant_Liquids')
 

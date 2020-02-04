@@ -9,6 +9,7 @@ dashboardPage(
   skin = "blue",
   dashboardHeader(
     title = "U.S. Energy Renaissance",
+    titleWidth = 300, 
     tags$li(actionLink("GitHub", 
                        label = "", 
                        icon = icon("github"),

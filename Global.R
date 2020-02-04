@@ -22,18 +22,18 @@ symbols_ng = list('EIA/NG_N9100US2_A', 'EIA/NG_N9103US2_A', 'EIA/NG_N9102US2_A')
 symbols_ng_titles = list('Date', 'Total_Imports', 'LNG_Imports', 'Pipeline_Imports')
 
 imports = Quandl(symbols_ng, 
-                 start_date='01-01-1990', 
+                 start_date='01-01-1980', 
                  end_date='01-01-2020', 
                  collapse='annual')
-
+imports
 colnames(imports) = symbols_ng_titles
-imports[,-1] = round(imports[,-1]/1000000, digits = 1)
+imports[,-1] = round(imports[,-1]/1000, digits = 1)
 imports
 
 Quandl(switch(input$Category, 
               "imports" = symbols_ng, 
               "exports" = symbols2_ng), 
-                                  start_date='01-01-1990', 
+                                  start_date='01-01-1980', 
                                   end_date='01-01-2020', 
                                   collapse='annual')
 
@@ -94,16 +94,14 @@ colnames(ng_prod) = titles_ngprod
 ng_prod[,-1] = round(ng_prod[,-1]/1000, digits=1)
 ng_prod
 
-
 ggplot(data=ng_prod, aes(x=Date, y=ng_prod$Dry_Natural_Gas)) + 
-  geom_line() +  
+  geom_line(color="red") +  
   xlab(label='Date') + 
   ylab(label='Billion Cubic Feet') + 
   labs(title='U.S. Natural Gas Production') 
 
 ng_prod = gather(ng_prod, "variable", "value",2:4)
 ng_prod
-
 
 ####### U.S. Natural Gas Supply Proven Reserves ###### 
 
