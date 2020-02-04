@@ -1,7 +1,7 @@
 
 ######################## NATURAL GAS ##############
 
-library('knitr')
+library(knitr)
 library(ggplot2)
 library(dplyr)
 library(shiny)
@@ -161,7 +161,7 @@ barplot(as.numeric(a[,1:5]),
         ylab = 'Trillion Cubic Feet',
         ylim = c(0,2000), 
         width = 1, 
-        col = c('green', 'blue', 'black', 'red', 'yellow'))
+        col = c('green', 'blue', 'orange', 'black', 'brown'))
 
 
 df_all = left_join(imports, ngexports, by = "Date")

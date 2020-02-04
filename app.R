@@ -3,40 +3,71 @@
 library(shiny)
 library(shinydashboard)
 
-# Define UI for application that draws a histogram
 ui <- fluidPage(
-  
-  
 
-  
-  # Application title
-  titlePanel("US Oil & Gas Trade"),
-  
-  # Sidebar with a slider input for number of bins 
-
-  
-
-    # Show a plot of the generated distribution
-    mainPanel(
-      selectizeInput(inputId = 'trade', 
-                     label = 'U.S. Trade',
-                     choices = unique(df_all$type)),
-      
-      selectizeInput(inputId = 'prod', 
-                     label = 'Production',
-                     choices = unique(ng_prod$variable)),
-      
-      tabsetPanel(
-        tabPanel("Trade", plotOutput("trade")),
-        tabPanel("Production", plotOutput('prod')),
-        tabPanel("Supply", plotOutput('supply')),
-        tabPanel("Reserves", plotOutput('reserves'))
-      )
+dashboardPage(
+  skin = "blue",
+  dashboardHeader(
+    title = "U.S. Energy Renaissance",
+    tags$li(actionLink("GitHub", 
+                       label = "", 
+                       icon = icon("github"),
+                       onclick = "window.open('https://github.com/nabrarpour4/NYCDSA_2020')"),
+            class = "dropdown")
+  ),
+  dashboardSidebar(
+    sidebarUserPanel("Nickolas Abrarpour", subtitle = "NYCDSA Fellow"),
+    
+    sidebarMenu(
+      menuItem("Trade", tabName = "trade"),
+      menuItem("Production", tabName = "prod"),
+      menuItem("Supply", tabName = "supply"),
+      menuItem("International Reserves", tabName = "reserves")
     )
+  ),
+  dashboardBody(
+    tabItems(
+      tabItem(tabName = "trade",
+        mainPanel(
+              fluidRow(
+                plotOutput('trade'),
+          column(4,
+                 selectizeInput(inputId = 'trade', 
+                                label = 'Imports/Exports',
+                                choices = df_all$type,
+                                selected =df_all$value)
+          ) # end fluidRow for user input
+        ) # end tabItem for chart
+        ) # end fluidRow for user input
+      ), # end tabItem for map
+      tabItem(tabName = "prod",
+              fluidRow(
+                plotOutput("prod")
+              ),
+                column(4,
+                       selectizeInput(inputId = 'prod', 
+                                      label = 'Production',
+                                      choices = unique(ng_prod$variable))
+                ) # end fluidRow for user input
+      ), # end tabItem for chart
+      tabItem(tabName = "supply",
+              fluidRow(
+                plotOutput("supply")
+      ) # end fluidRow for tabItem 'data'
+      ), # end tabItem data
+      tabItem(tabName = "reserves",
+              fluidRow(
+                plotOutput("reserves"))
+      )
+     )
+    )
+  )
 )
+ # end dashboardBody
 
-#Server.R
+
 server <- function(input, output) {
+  
   
   output$trade <- renderPlot({
     
@@ -44,18 +75,19 @@ server <- function(input, output) {
       filter(type == input$trade) %>% 
       ggplot(aes(x=Date, y=value, colour=variable)) + 
       geom_line() + 
-      labs(title='Imports') + 
       xlab(label = 'Date') +
-      ylab(label='Billion Cubic Feet')
+      ylab(label='Billion Cubic Feet') +
+      labs(title='U.S. Natural Gas Trade') + 
+      theme(legend.position = "bottom")
   })
   
   output$prod <- renderPlot({
     
     ng_prod %>% filter(variable == input$prod) %>%
-      ggplot(aes(x=Date, y=value)) + 
-      geom_line() +  
+      ggplot(aes(x=Date, y=value/1000)) + 
+      geom_line(color="red") +
       xlab(label='Date') + 
-      ylab(label='Billion Cubic Feet') + 
+      ylab(label='Trillion Cubic Feet') +
       labs(title='U.S. Natural Gas Production') 
     
   })
@@ -84,10 +116,12 @@ server <- function(input, output) {
             ylab = 'Trillion Cubic Feet',
             ylim = c(0,2000), 
             width = 1, 
-            col = c('green', 'blue', 'black', 'red', 'yellow'))
+            col = c('green', 'blue', 'orange', 'black', 'brown'))
     
   })
+  
+  
 }
 
-# Run the application 
 shinyApp(ui = ui, server = server)
+
